@@ -51,4 +51,13 @@ weather_history("London", start = "2020-01-01", end = "2021-12-31", hourly = "cl
 ```{r}
 weather_variables()
 ```
+```{r}
+df2=weather_history("Washington",
+                 start = "2023-09-01", end = "2023-09-30", hourly = c("apparent_temperature","wind_speed_10m","precipitation","rain"),
+                 response_units = list(
+                 temperature_unit="fahrenheit",
+                 precipitation_unit = "inch"
+                 )
+                 )
+```
 
