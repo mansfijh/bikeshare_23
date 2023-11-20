@@ -1,0 +1,103 @@
+---
+title: "Bike station deficits/gains"
+output: html_notebook
+---
+
+Marco Camalich, Joshua Alessio and Kashyap Vallur
+
+```{r}
+library(tidyverse)
+library(janitor)
+library(here)
+library(openmeteo)
+library(lubridate)
+library(forcats)
+```
+
+```{r}
+df1=read_csv(here("data_raw", "202309-capitalbikeshare-tripdata.csv"))
+```
+```{r}
+dfb <- df1 %>%
+  filter(
+    ymd_hms(started_at) <= ymd_hms(ended_at),
+    !is.na(start_station_id),
+    !is.na(end_station_id)
+  )
+```
+
+```{r}
+dfb_starts <- dfb %>%
+  group_by(start_station_id) %>%
+  summarise(starts = n())
+dfb_starts
+```
+
+```{r}
+dfb_ends <- dfb %>%
+  group_by(end_station_id) %>%
+  summarise(ends = n())
+dfb_ends
+```
+
+```{r}
+dfb_join <- left_join(dfb_starts, dfb_ends, by = c("start_station_id" = "end_station_id"))
+dfb_join$station_id <- dfb_join$start_station_id
+dfb_join$start_station_id <- NULL
+dfb_join <- dfb_join %>%
+select(station_id, everything())
+dfb_join
+```
+```{r}
+dfb_join <- dfb_join %>% mutate(net_gain = starts - ends)
+dfb_join
+```
+```{r}
+dfb_join$station_id <- as.factor(dfb_join$station_id)
+summary(dfb_join)
+```
+
+```{r}
+ggplot(dfb_join, aes(x = as.factor(station_id), y = net_gain, fill = factor(net_gain > 0))) +
+  geom_bar(stat = "identity", alpha = 0.7) +
+  scale_fill_manual(values = c("red", "blue"), guide = FALSE) +
+  labs(title = "Net Gain by Station",
+       x = "Station ID",
+       y = "Net Gain") +
+  theme_minimal() +
+  coord_cartesian(ylim = c(-50, 50))  # Adjust the limits based on your data
+```
+```{r}
+top_bottom_stations <- dfb_join %>%
+  arrange(net_gain) %>%
+  slice_head(n = 10) %>%
+  bind_rows(dfb_join %>%
+              arrange(desc(net_gain)) %>%
+              slice_head(n = 10))
+
+ggplot(top_bottom_stations, aes(x = fct_reorder(factor(station_id), net_gain), y = net_gain, fill = factor(net_gain > 0))) +
+  geom_bar(stat = "identity", alpha = 0.7) +
+  scale_fill_manual(values = c("red", "blue"), guide = FALSE) +
+  labs(title = "Top and Bottom 10 Stations by Net Gain",
+       x = "Station ID",
+       y = "Net Gain") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+*In conclusion, we can observe that Station 31215 is the one that has the most ends of trips while 31602 is the one used for more starts.*
+
+**Hypotheses:**
+
+- Are there significant differences in usage levels among bike stations?
+
+- Do variations exist in the average net gain of bikes during different times of the day?
+
+- Are there differences in bike usage patterns between weekdays and weekends?
+
+- Does net gain vary significantly between members and casual users?
+
+- Are there significant differences in bike net gain based on geographical locations?
+
+
+
+
