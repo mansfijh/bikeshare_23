@@ -1,0 +1,149 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+Load Packages
+```{r} 
+library(tidyverse)
+library(janitor)
+library(here)
+library(openmeteo)
+library(lubridate)
+```
+
+```{r}
+df1=read_csv(here("data_raw", "202309-capitalbikeshare-tripdata.csv"))
+```
+
+
+```{r}
+df2s=df1 %>% 
+  select(rideable_type,member_casual,
+                    contains("start"),ride_id) %>% 
+  mutate(start_stop="start") %>%
+  rename(t=started_at,
+         station_name=start_station_name,
+         station_id=start_station_id,
+         lat=start_lat,
+         lng=start_lng)
+```
+
+
+```{r}
+df2e=df1 %>% 
+  select(ride_id,rideable_type,member_casual,
+                    contains("end")) %>%
+  mutate(start_stop="stop") %>%
+  rename(t=ended_at,
+         station_name=end_station_name,
+         station_id=end_station_id,
+         lat=end_lat,
+         lng=end_lng)
+```
+
+```{r}
+df2=bind_rows(df2s,df2e) %>%
+  arrange(t) %>%
+  mutate(rider_delta=(start_stop=="start")*2-1) %>% #change in ridership 
+  mutate(riders=cumsum(rider_delta)) %>%
+  relocate(riders,.after=t)
+```
+
+```{r}
+df2 %>% 
+  ggplot(aes(t,riders)) +
+  geom_line()
+```
+
+# Constructing a subsampled dataset
+Let's try to create a subsample of the dataset so our workflow doesn't have to run through 450,000 calculations each time we test the code
+```{r}
+df_s <- df2 %>% slice_head(n=1000)        # Take off the top 1000 rows of df2
+```
+
+
+Use a smaller dataset to check to see if our process is correct before we perform it on the entire huge dataset
+```{r}
+
+df_e=df_s |>
+  mutate(t_f=floor_date(t,"10 mins")) %>%  # Add new column, which rounds down the time to nearest 10 minutes
+  relocate(t_f,.after=t) %>%               # rearrange column order - put "t_f" to the right of "t"
+  slice_head(n=1, by=t_f)                  # Take the first row of each different value of t_f by treating t_f as a                                                  grouping variable 
+df_e
+```
+```{r}
+df_r=df2 |>
+  mutate(t_f=floor_date(t,"1 mins")) %>%
+  relocate(t_f,.after=t) %>%
+  slice_head(n=1,by=t_f)
+```
+
+
+Visualize the difference between the full dataset and the sample dataset
+```{r}
+p1=df2 %>% 
+  filter(day(t)==18) %>%
+  ggplot(aes(t,riders)) +
+  geom_line() +
+  ggtitle("Riders on 18Sep")
+p1+
+  geom_line(data=df_r %>% filter(day(t)==18),
+  color="red")                              
+```
+
+
+
+# Get Weather Data for September
+Using the openmeteo package
+```{r}
+df_w=weather_history("Washington",
+                    start = "2023-09-01",
+                    end = "2023-09-30",
+                    hourly = c("apparent_temperature",
+                               "wind_speed_10m",
+                               "precipitation")
+)
+```
+
+
+
+
+This code block should reveal a previous mistake - the time zones are different
+```{r}
+df2c=df2 %>% mutate(t=force_tz(t,tzone="America/New_York")) #corrected
+ 
+df_s2=df2c %>% slice_sample(n=1000)
+ 
+df_j2=df_s2 %>% 
+  left_join(df_w,by=join_by(closest(t>=datetime)))  %>%
+  relocate(datetime, .after=t)
+ 
+head(df_j2)
+```
+
+
+```{r}
+
+df2$t[1:5]
+force_tz(df2$t[1:5],"America/New_York")
+    df2c=df2 %>% mutate(t=force_tz(t,tzone="America/New_York")) #corrected
+df_s2=df2c %>% slice_sample(n=1000)
+df_j2=df_s2 %>% 
+  left_join(df_w,by=join_by(closest(t>=datetime)))  %>%
+  relocate(datetime, .after=t)
+head(df_j2)
+
+```
+
+
+```{r}
+df1d = df1 %>%
+  mutate(ride_time=ended_at - started_at) %>%
+df1d <- 
+```
+
+```{r}
+df1d %>% 
+  ggplot(aes(ride_time)) +
+  geom_histogram()
+```
