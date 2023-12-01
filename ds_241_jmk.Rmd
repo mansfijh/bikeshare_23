@@ -1,18 +1,37 @@
 ---
-title: "R Notebook"
+title: "Final Project"
 output: html_notebook
+authors: Joshua Allessio, Kashyap Vallur and Marco Camalich
 ---
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
-
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
-
 ```{r}
+required_packages <- c("tidyverse", "janitor", "here", "openmeteo", "lubridate", "forcats")
+
+for (pkg in required_packages) {
+  if (!require(pkg, character.only = TRUE)) {
+    install.packages(pkg, dependencies = TRUE)
+    library(pkg, character.only = TRUE)
+  }
+}
+
+if (all(sapply(required_packages, requireNamespace, quietly = TRUE))) {
+  cat("All required packages are loaded.\n")
+} else {
+  warning("Some packages failed to load.")
+}
 
 ```
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+```{r}
+df_01=read_csv(here("data_raw", "202301-capitalbikeshare-tripdata.csv"))
+df_02=read_csv(here("data_raw", "202302-capitalbikeshare-tripdata.csv"))
+df_03=read_csv(here("data_raw", "202303-capitalbikeshare-tripdata.csv"))
+df_04=read_csv(here("data_raw", "202304-capitalbikeshare-tripdata.csv"))
+df_05=read_csv(here("data_raw", "202305-capitalbikeshare-tripdata.csv"))
+df_06=read_csv(here("data_raw", "202306-capitalbikeshare-tripdata.csv"))
+df_07=read_csv(here("data_raw", "202307-capitalbikeshare-tripdata.csv"))
+df_08=read_csv(here("data_raw", "202308-capitalbikeshare-tripdata.csv"))
+df_09=read_csv(here("data_raw", "202309-capitalbikeshare-tripdata.csv"))
+df_10=read_csv(here("data_raw", "202310-capitalbikeshare-tripdata.csv"))
+```
 
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
-
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.

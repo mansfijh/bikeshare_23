@@ -11,7 +11,7 @@
 
 
 
-<title>R Notebook</title>
+<title>Final Project</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -1746,34 +1746,162 @@ display: none;
 
 
 
-<h1 class="title toc-ignore">R Notebook</h1>
+<h1 class="title toc-ignore">Final Project</h1>
 
 </div>
 
 
 <!-- rnb-text-begin -->
-<p>This is an <a href="http://rmarkdown.rstudio.com">R Markdown</a>
-Notebook. When you execute code within the notebook, the results appear
-beneath the code.</p>
-<p>Try executing this chunk by clicking the <em>Run</em> button within
-the chunk or by placing your cursor inside it and pressing
-<em>Ctrl+Shift+Enter</em>.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucmVxdWlyZWRfcGFja2FnZXMgPC0gYyhcInRpZHl2ZXJzZVwiLCBcImphbml0b3JcIiwgXCJoZXJlXCIsIFwib3Blbm1ldGVvXCIsIFwibHVicmlkYXRlXCIsIFwiZm9yY2F0c1wiKVxuXG5mb3IgKHBrZyBpbiByZXF1aXJlZF9wYWNrYWdlcykge1xuICBpZiAoIXJlcXVpcmUocGtnLCBjaGFyYWN0ZXIub25seSA9IFRSVUUpKSB7XG4gICAgaW5zdGFsbC5wYWNrYWdlcyhwa2csIGRlcGVuZGVuY2llcyA9IFRSVUUpXG4gICAgbGlicmFyeShwa2csIGNoYXJhY3Rlci5vbmx5ID0gVFJVRSlcbiAgfVxufVxuXG5pZiAoYWxsKHNhcHBseShyZXF1aXJlZF9wYWNrYWdlcywgcmVxdWlyZU5hbWVzcGFjZSwgcXVpZXRseSA9IFRSVUUpKSkge1xuICBjYXQoXCJBbGwgcmVxdWlyZWQgcGFja2FnZXMgYXJlIGxvYWRlZC5cXG5cIilcbn0gZWxzZSB7XG4gIHdhcm5pbmcoXCJTb21lIHBhY2thZ2VzIGZhaWxlZCB0byBsb2FkLlwiKVxufVxuYGBgIn0= -->
+<pre class="r"><code>required_packages &lt;- c(&quot;tidyverse&quot;, &quot;janitor&quot;, &quot;here&quot;, &quot;openmeteo&quot;, &quot;lubridate&quot;, &quot;forcats&quot;)
+
+for (pkg in required_packages) {
+  if (!require(pkg, character.only = TRUE)) {
+    install.packages(pkg, dependencies = TRUE)
+    library(pkg, character.only = TRUE)
+  }
+}
+
+if (all(sapply(required_packages, requireNamespace, quietly = TRUE))) {
+  cat(&quot;All required packages are loaded.\n&quot;)
+} else {
+  warning(&quot;Some packages failed to load.&quot;)
+}</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiQWxsIHJlcXVpcmVkIHBhY2thZ2VzIGFyZSBsb2FkZWQuXG4ifQ== -->
+<pre><code>All required packages are loaded.</code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>Add a new chunk by clicking the <em>Insert Chunk</em> button on the
-toolbar or by pressing <em>Ctrl+Alt+I</em>.</p>
-<p>When you save the notebook, an HTML file containing the code and
-output will be saved alongside it (click the <em>Preview</em> button or
-press <em>Ctrl+Shift+K</em> to preview the HTML file).</p>
-<p>The preview shows you a rendered HTML copy of the contents of the
-editor. Consequently, unlike <em>Knit</em>, <em>Preview</em> does not
-run any R code chunks. Instead, the output of the chunk when it was last
-run in the editor is displayed.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGZfMDE9cmVhZF9jc3YoaGVyZShcImRhdGFfcmF3XCIsIFwiMjAyMzAxLWNhcGl0YWxiaWtlc2hhcmUtdHJpcGRhdGEuY3N2XCIpKVxuYGBgIn0= -->
+<pre class="r"><code>df_01=read_csv(here(&quot;data_raw&quot;, &quot;202301-capitalbikeshare-tripdata.csv&quot;))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiUm93czogMjA0MDc3IENvbHVtbnM6IDEz4pSA4pSAIENvbHVtbiBzcGVjaWZpY2F0aW9uIOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgFxuRGVsaW1pdGVyOiBcIixcIlxuY2hyICAoNSk6IHJpZGVfaWQsIHJpZGVhYmxlX3R5cGUsIHN0YXJ0X3N0YXRpb25fbmFtZSwgZW5kX3N0YXRpb25fbmFtZSwgbWVtYmVyX2Nhc3VhbFxuZGJsICAoNik6IHN0YXJ0X3N0YXRpb25faWQsIGVuZF9zdGF0aW9uX2lkLCBzdGFydF9sYXQsIHN0YXJ0X2xuZywgZW5kX2xhdCwgZW5kX2xuZ1xuZHR0bSAoMik6IHN0YXJ0ZWRfYXQsIGVuZGVkX2F0XG7ihLkgVXNlIGBzcGVjKClgIHRvIHJldHJpZXZlIHRoZSBmdWxsIGNvbHVtbiBzcGVjaWZpY2F0aW9uIGZvciB0aGlzIGRhdGEuXG7ihLkgU3BlY2lmeSB0aGUgY29sdW1uIHR5cGVzIG9yIHNldCBgc2hvd19jb2xfdHlwZXMgPSBGQUxTRWAgdG8gcXVpZXQgdGhpcyBtZXNzYWdlLlxuIn0= -->
+<pre><code>Rows: 204077 Columns: 13── Column specification ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Delimiter: &quot;,&quot;
+chr  (5): ride_id, rideable_type, start_station_name, end_station_name, member_casual
+dbl  (6): start_station_id, end_station_id, start_lat, start_lng, end_lat, end_lng
+dttm (2): started_at, ended_at
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGZfMDI9cmVhZF9jc3YoaGVyZShcImRhdGFfcmF3XCIsIFwiMjAyMzAyLWNhcGl0YWxiaWtlc2hhcmUtdHJpcGRhdGEuY3N2XCIpKVxuYGBgIn0= -->
+<pre class="r"><code>df_02=read_csv(here(&quot;data_raw&quot;, &quot;202302-capitalbikeshare-tripdata.csv&quot;))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiUm93czogMjA3NTkxIENvbHVtbnM6IDEz4pSA4pSAIENvbHVtbiBzcGVjaWZpY2F0aW9uIOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgFxuRGVsaW1pdGVyOiBcIixcIlxuY2hyICAoNSk6IHJpZGVfaWQsIHJpZGVhYmxlX3R5cGUsIHN0YXJ0X3N0YXRpb25fbmFtZSwgZW5kX3N0YXRpb25fbmFtZSwgbWVtYmVyX2Nhc3VhbFxuZGJsICAoNik6IHN0YXJ0X3N0YXRpb25faWQsIGVuZF9zdGF0aW9uX2lkLCBzdGFydF9sYXQsIHN0YXJ0X2xuZywgZW5kX2xhdCwgZW5kX2xuZ1xuZHR0bSAoMik6IHN0YXJ0ZWRfYXQsIGVuZGVkX2F0XG7ihLkgVXNlIGBzcGVjKClgIHRvIHJldHJpZXZlIHRoZSBmdWxsIGNvbHVtbiBzcGVjaWZpY2F0aW9uIGZvciB0aGlzIGRhdGEuXG7ihLkgU3BlY2lmeSB0aGUgY29sdW1uIHR5cGVzIG9yIHNldCBgc2hvd19jb2xfdHlwZXMgPSBGQUxTRWAgdG8gcXVpZXQgdGhpcyBtZXNzYWdlLlxuIn0= -->
+<pre><code>Rows: 207591 Columns: 13── Column specification ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Delimiter: &quot;,&quot;
+chr  (5): ride_id, rideable_type, start_station_name, end_station_name, member_casual
+dbl  (6): start_station_id, end_station_id, start_lat, start_lng, end_lat, end_lng
+dttm (2): started_at, ended_at
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGZfMDM9cmVhZF9jc3YoaGVyZShcImRhdGFfcmF3XCIsIFwiMjAyMzAzLWNhcGl0YWxiaWtlc2hhcmUtdHJpcGRhdGEuY3N2XCIpKVxuYGBgIn0= -->
+<pre class="r"><code>df_03=read_csv(here(&quot;data_raw&quot;, &quot;202303-capitalbikeshare-tripdata.csv&quot;))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiUm93czogMjkwNDMwIENvbHVtbnM6IDEz4pSA4pSAIENvbHVtbiBzcGVjaWZpY2F0aW9uIOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgFxuRGVsaW1pdGVyOiBcIixcIlxuY2hyICAoNSk6IHJpZGVfaWQsIHJpZGVhYmxlX3R5cGUsIHN0YXJ0X3N0YXRpb25fbmFtZSwgZW5kX3N0YXRpb25fbmFtZSwgbWVtYmVyX2Nhc3VhbFxuZGJsICAoNik6IHN0YXJ0X3N0YXRpb25faWQsIGVuZF9zdGF0aW9uX2lkLCBzdGFydF9sYXQsIHN0YXJ0X2xuZywgZW5kX2xhdCwgZW5kX2xuZ1xuZHR0bSAoMik6IHN0YXJ0ZWRfYXQsIGVuZGVkX2F0XG7ihLkgVXNlIGBzcGVjKClgIHRvIHJldHJpZXZlIHRoZSBmdWxsIGNvbHVtbiBzcGVjaWZpY2F0aW9uIGZvciB0aGlzIGRhdGEuXG7ihLkgU3BlY2lmeSB0aGUgY29sdW1uIHR5cGVzIG9yIHNldCBgc2hvd19jb2xfdHlwZXMgPSBGQUxTRWAgdG8gcXVpZXQgdGhpcyBtZXNzYWdlLlxuIn0= -->
+<pre><code>Rows: 290430 Columns: 13── Column specification ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Delimiter: &quot;,&quot;
+chr  (5): ride_id, rideable_type, start_station_name, end_station_name, member_casual
+dbl  (6): start_station_id, end_station_id, start_lat, start_lng, end_lat, end_lng
+dttm (2): started_at, ended_at
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGZfMDQ9cmVhZF9jc3YoaGVyZShcImRhdGFfcmF3XCIsIFwiMjAyMzA0LWNhcGl0YWxiaWtlc2hhcmUtdHJpcGRhdGEuY3N2XCIpKVxuYGBgIn0= -->
+<pre class="r"><code>df_04=read_csv(here(&quot;data_raw&quot;, &quot;202304-capitalbikeshare-tripdata.csv&quot;))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiUm93czogMzg5MjQzIENvbHVtbnM6IDEz4pSA4pSAIENvbHVtbiBzcGVjaWZpY2F0aW9uIOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgFxuRGVsaW1pdGVyOiBcIixcIlxuY2hyICAoNSk6IHJpZGVfaWQsIHJpZGVhYmxlX3R5cGUsIHN0YXJ0X3N0YXRpb25fbmFtZSwgZW5kX3N0YXRpb25fbmFtZSwgbWVtYmVyX2Nhc3VhbFxuZGJsICAoNik6IHN0YXJ0X3N0YXRpb25faWQsIGVuZF9zdGF0aW9uX2lkLCBzdGFydF9sYXQsIHN0YXJ0X2xuZywgZW5kX2xhdCwgZW5kX2xuZ1xuZHR0bSAoMik6IHN0YXJ0ZWRfYXQsIGVuZGVkX2F0XG7ihLkgVXNlIGBzcGVjKClgIHRvIHJldHJpZXZlIHRoZSBmdWxsIGNvbHVtbiBzcGVjaWZpY2F0aW9uIGZvciB0aGlzIGRhdGEuXG7ihLkgU3BlY2lmeSB0aGUgY29sdW1uIHR5cGVzIG9yIHNldCBgc2hvd19jb2xfdHlwZXMgPSBGQUxTRWAgdG8gcXVpZXQgdGhpcyBtZXNzYWdlLlxuIn0= -->
+<pre><code>Rows: 389243 Columns: 13── Column specification ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Delimiter: &quot;,&quot;
+chr  (5): ride_id, rideable_type, start_station_name, end_station_name, member_casual
+dbl  (6): start_station_id, end_station_id, start_lat, start_lng, end_lat, end_lng
+dttm (2): started_at, ended_at
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGZfMDU9cmVhZF9jc3YoaGVyZShcImRhdGFfcmF3XCIsIFwiMjAyMzA1LWNhcGl0YWxiaWtlc2hhcmUtdHJpcGRhdGEuY3N2XCIpKVxuYGBgIn0= -->
+<pre class="r"><code>df_05=read_csv(here(&quot;data_raw&quot;, &quot;202305-capitalbikeshare-tripdata.csv&quot;))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiUm93czogNDMxOTUyIENvbHVtbnM6IDEz4pSA4pSAIENvbHVtbiBzcGVjaWZpY2F0aW9uIOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgFxuRGVsaW1pdGVyOiBcIixcIlxuY2hyICAoNSk6IHJpZGVfaWQsIHJpZGVhYmxlX3R5cGUsIHN0YXJ0X3N0YXRpb25fbmFtZSwgZW5kX3N0YXRpb25fbmFtZSwgbWVtYmVyX2Nhc3VhbFxuZGJsICAoNik6IHN0YXJ0X3N0YXRpb25faWQsIGVuZF9zdGF0aW9uX2lkLCBzdGFydF9sYXQsIHN0YXJ0X2xuZywgZW5kX2xhdCwgZW5kX2xuZ1xuZHR0bSAoMik6IHN0YXJ0ZWRfYXQsIGVuZGVkX2F0XG7ihLkgVXNlIGBzcGVjKClgIHRvIHJldHJpZXZlIHRoZSBmdWxsIGNvbHVtbiBzcGVjaWZpY2F0aW9uIGZvciB0aGlzIGRhdGEuXG7ihLkgU3BlY2lmeSB0aGUgY29sdW1uIHR5cGVzIG9yIHNldCBgc2hvd19jb2xfdHlwZXMgPSBGQUxTRWAgdG8gcXVpZXQgdGhpcyBtZXNzYWdlLlxuIn0= -->
+<pre><code>Rows: 431952 Columns: 13── Column specification ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Delimiter: &quot;,&quot;
+chr  (5): ride_id, rideable_type, start_station_name, end_station_name, member_casual
+dbl  (6): start_station_id, end_station_id, start_lat, start_lng, end_lat, end_lng
+dttm (2): started_at, ended_at
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGZfMDY9cmVhZF9jc3YoaGVyZShcImRhdGFfcmF3XCIsIFwiMjAyMzA2LWNhcGl0YWxiaWtlc2hhcmUtdHJpcGRhdGEuY3N2XCIpKVxuYGBgIn0= -->
+<pre class="r"><code>df_06=read_csv(here(&quot;data_raw&quot;, &quot;202306-capitalbikeshare-tripdata.csv&quot;))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiUm93czogNDMwNjcwIENvbHVtbnM6IDEz4pSA4pSAIENvbHVtbiBzcGVjaWZpY2F0aW9uIOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgFxuRGVsaW1pdGVyOiBcIixcIlxuY2hyICAoNSk6IHJpZGVfaWQsIHJpZGVhYmxlX3R5cGUsIHN0YXJ0X3N0YXRpb25fbmFtZSwgZW5kX3N0YXRpb25fbmFtZSwgbWVtYmVyX2Nhc3VhbFxuZGJsICAoNik6IHN0YXJ0X3N0YXRpb25faWQsIGVuZF9zdGF0aW9uX2lkLCBzdGFydF9sYXQsIHN0YXJ0X2xuZywgZW5kX2xhdCwgZW5kX2xuZ1xuZHR0bSAoMik6IHN0YXJ0ZWRfYXQsIGVuZGVkX2F0XG7ihLkgVXNlIGBzcGVjKClgIHRvIHJldHJpZXZlIHRoZSBmdWxsIGNvbHVtbiBzcGVjaWZpY2F0aW9uIGZvciB0aGlzIGRhdGEuXG7ihLkgU3BlY2lmeSB0aGUgY29sdW1uIHR5cGVzIG9yIHNldCBgc2hvd19jb2xfdHlwZXMgPSBGQUxTRWAgdG8gcXVpZXQgdGhpcyBtZXNzYWdlLlxuIn0= -->
+<pre><code>Rows: 430670 Columns: 13── Column specification ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Delimiter: &quot;,&quot;
+chr  (5): ride_id, rideable_type, start_station_name, end_station_name, member_casual
+dbl  (6): start_station_id, end_station_id, start_lat, start_lng, end_lat, end_lng
+dttm (2): started_at, ended_at
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGZfMDc9cmVhZF9jc3YoaGVyZShcImRhdGFfcmF3XCIsIFwiMjAyMzA3LWNhcGl0YWxiaWtlc2hhcmUtdHJpcGRhdGEuY3N2XCIpKVxuYGBgIn0= -->
+<pre class="r"><code>df_07=read_csv(here(&quot;data_raw&quot;, &quot;202307-capitalbikeshare-tripdata.csv&quot;))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiUm93czogNDY2NDIyIENvbHVtbnM6IDEz4pSA4pSAIENvbHVtbiBzcGVjaWZpY2F0aW9uIOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgFxuRGVsaW1pdGVyOiBcIixcIlxuY2hyICAoNSk6IHJpZGVfaWQsIHJpZGVhYmxlX3R5cGUsIHN0YXJ0X3N0YXRpb25fbmFtZSwgZW5kX3N0YXRpb25fbmFtZSwgbWVtYmVyX2Nhc3VhbFxuZGJsICAoNik6IHN0YXJ0X3N0YXRpb25faWQsIGVuZF9zdGF0aW9uX2lkLCBzdGFydF9sYXQsIHN0YXJ0X2xuZywgZW5kX2xhdCwgZW5kX2xuZ1xuZHR0bSAoMik6IHN0YXJ0ZWRfYXQsIGVuZGVkX2F0XG7ihLkgVXNlIGBzcGVjKClgIHRvIHJldHJpZXZlIHRoZSBmdWxsIGNvbHVtbiBzcGVjaWZpY2F0aW9uIGZvciB0aGlzIGRhdGEuXG7ihLkgU3BlY2lmeSB0aGUgY29sdW1uIHR5cGVzIG9yIHNldCBgc2hvd19jb2xfdHlwZXMgPSBGQUxTRWAgdG8gcXVpZXQgdGhpcyBtZXNzYWdlLlxuIn0= -->
+<pre><code>Rows: 466422 Columns: 13── Column specification ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Delimiter: &quot;,&quot;
+chr  (5): ride_id, rideable_type, start_station_name, end_station_name, member_casual
+dbl  (6): start_station_id, end_station_id, start_lat, start_lng, end_lat, end_lng
+dttm (2): started_at, ended_at
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGZfMDg9cmVhZF9jc3YoaGVyZShcImRhdGFfcmF3XCIsIFwiMjAyMzA4LWNhcGl0YWxiaWtlc2hhcmUtdHJpcGRhdGEuY3N2XCIpKVxuYGBgIn0= -->
+<pre class="r"><code>df_08=read_csv(here(&quot;data_raw&quot;, &quot;202308-capitalbikeshare-tripdata.csv&quot;))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiUm93czogNDcwMTMyIENvbHVtbnM6IDEz4pSA4pSAIENvbHVtbiBzcGVjaWZpY2F0aW9uIOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgFxuRGVsaW1pdGVyOiBcIixcIlxuY2hyICAoNSk6IHJpZGVfaWQsIHJpZGVhYmxlX3R5cGUsIHN0YXJ0X3N0YXRpb25fbmFtZSwgZW5kX3N0YXRpb25fbmFtZSwgbWVtYmVyX2Nhc3VhbFxuZGJsICAoNik6IHN0YXJ0X3N0YXRpb25faWQsIGVuZF9zdGF0aW9uX2lkLCBzdGFydF9sYXQsIHN0YXJ0X2xuZywgZW5kX2xhdCwgZW5kX2xuZ1xuZHR0bSAoMik6IHN0YXJ0ZWRfYXQsIGVuZGVkX2F0XG7ihLkgVXNlIGBzcGVjKClgIHRvIHJldHJpZXZlIHRoZSBmdWxsIGNvbHVtbiBzcGVjaWZpY2F0aW9uIGZvciB0aGlzIGRhdGEuXG7ihLkgU3BlY2lmeSB0aGUgY29sdW1uIHR5cGVzIG9yIHNldCBgc2hvd19jb2xfdHlwZXMgPSBGQUxTRWAgdG8gcXVpZXQgdGhpcyBtZXNzYWdlLlxuIn0= -->
+<pre><code>Rows: 470132 Columns: 13── Column specification ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Delimiter: &quot;,&quot;
+chr  (5): ride_id, rideable_type, start_station_name, end_station_name, member_casual
+dbl  (6): start_station_id, end_station_id, start_lat, start_lng, end_lat, end_lng
+dttm (2): started_at, ended_at
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGZfMDk9cmVhZF9jc3YoaGVyZShcImRhdGFfcmF3XCIsIFwiMjAyMzA5LWNhcGl0YWxiaWtlc2hhcmUtdHJpcGRhdGEuY3N2XCIpKVxuYGBgIn0= -->
+<pre class="r"><code>df_09=read_csv(here(&quot;data_raw&quot;, &quot;202309-capitalbikeshare-tripdata.csv&quot;))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiUm93czogNDUwMDkwIENvbHVtbnM6IDEz4pSA4pSAIENvbHVtbiBzcGVjaWZpY2F0aW9uIOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgFxuRGVsaW1pdGVyOiBcIixcIlxuY2hyICAoNSk6IHJpZGVfaWQsIHJpZGVhYmxlX3R5cGUsIHN0YXJ0X3N0YXRpb25fbmFtZSwgZW5kX3N0YXRpb25fbmFtZSwgbWVtYmVyX2Nhc3VhbFxuZGJsICAoNik6IHN0YXJ0X3N0YXRpb25faWQsIGVuZF9zdGF0aW9uX2lkLCBzdGFydF9sYXQsIHN0YXJ0X2xuZywgZW5kX2xhdCwgZW5kX2xuZ1xuZHR0bSAoMik6IHN0YXJ0ZWRfYXQsIGVuZGVkX2F0XG7ihLkgVXNlIGBzcGVjKClgIHRvIHJldHJpZXZlIHRoZSBmdWxsIGNvbHVtbiBzcGVjaWZpY2F0aW9uIGZvciB0aGlzIGRhdGEuXG7ihLkgU3BlY2lmeSB0aGUgY29sdW1uIHR5cGVzIG9yIHNldCBgc2hvd19jb2xfdHlwZXMgPSBGQUxTRWAgdG8gcXVpZXQgdGhpcyBtZXNzYWdlLlxuIn0= -->
+<pre><code>Rows: 450090 Columns: 13── Column specification ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Delimiter: &quot;,&quot;
+chr  (5): ride_id, rideable_type, start_station_name, end_station_name, member_casual
+dbl  (6): start_station_id, end_station_id, start_lat, start_lng, end_lat, end_lng
+dttm (2): started_at, ended_at
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGZfMTA9cmVhZF9jc3YoaGVyZShcImRhdGFfcmF3XCIsIFwiMjAyMzEwLWNhcGl0YWxiaWtlc2hhcmUtdHJpcGRhdGEuY3N2XCIpKVxuYGBgIn0= -->
+<pre class="r"><code>df_10=read_csv(here(&quot;data_raw&quot;, &quot;202310-capitalbikeshare-tripdata.csv&quot;))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiUm93czogNDkxMDg0IENvbHVtbnM6IDEz4pSA4pSAIENvbHVtbiBzcGVjaWZpY2F0aW9uIOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgFxuRGVsaW1pdGVyOiBcIixcIlxuY2hyICAoNSk6IHJpZGVfaWQsIHJpZGVhYmxlX3R5cGUsIHN0YXJ0X3N0YXRpb25fbmFtZSwgZW5kX3N0YXRpb25fbmFtZSwgbWVtYmVyX2Nhc3VhbFxuZGJsICAoNik6IHN0YXJ0X3N0YXRpb25faWQsIGVuZF9zdGF0aW9uX2lkLCBzdGFydF9sYXQsIHN0YXJ0X2xuZywgZW5kX2xhdCwgZW5kX2xuZ1xuZHR0bSAoMik6IHN0YXJ0ZWRfYXQsIGVuZGVkX2F0XG7ihLkgVXNlIGBzcGVjKClgIHRvIHJldHJpZXZlIHRoZSBmdWxsIGNvbHVtbiBzcGVjaWZpY2F0aW9uIGZvciB0aGlzIGRhdGEuXG7ihLkgU3BlY2lmeSB0aGUgY29sdW1uIHR5cGVzIG9yIHNldCBgc2hvd19jb2xfdHlwZXMgPSBGQUxTRWAgdG8gcXVpZXQgdGhpcyBtZXNzYWdlLlxuIn0= -->
+<pre><code>Rows: 491084 Columns: 13── Column specification ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Delimiter: &quot;,&quot;
+chr  (5): ride_id, rideable_type, start_station_name, end_station_name, member_casual
+dbl  (6): start_station_id, end_station_id, start_lat, start_lng, end_lat, end_lng
+dttm (2): started_at, ended_at
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIlIgTm90ZWJvb2siDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCi0tLQ0KDQpUaGlzIGlzIGFuIFtSIE1hcmtkb3duXShodHRwOi8vcm1hcmtkb3duLnJzdHVkaW8uY29tKSBOb3RlYm9vay4gV2hlbiB5b3UgZXhlY3V0ZSBjb2RlIHdpdGhpbiB0aGUgbm90ZWJvb2ssIHRoZSByZXN1bHRzIGFwcGVhciBiZW5lYXRoIHRoZSBjb2RlLiANCg0KVHJ5IGV4ZWN1dGluZyB0aGlzIGNodW5rIGJ5IGNsaWNraW5nIHRoZSAqUnVuKiBidXR0b24gd2l0aGluIHRoZSBjaHVuayBvciBieSBwbGFjaW5nIHlvdXIgY3Vyc29yIGluc2lkZSBpdCBhbmQgcHJlc3NpbmcgKkN0cmwrU2hpZnQrRW50ZXIqLiANCg0KYGBge3J9DQoNCmBgYA0KDQpBZGQgYSBuZXcgY2h1bmsgYnkgY2xpY2tpbmcgdGhlICpJbnNlcnQgQ2h1bmsqIGJ1dHRvbiBvbiB0aGUgdG9vbGJhciBvciBieSBwcmVzc2luZyAqQ3RybCtBbHQrSSouDQoNCldoZW4geW91IHNhdmUgdGhlIG5vdGVib29rLCBhbiBIVE1MIGZpbGUgY29udGFpbmluZyB0aGUgY29kZSBhbmQgb3V0cHV0IHdpbGwgYmUgc2F2ZWQgYWxvbmdzaWRlIGl0IChjbGljayB0aGUgKlByZXZpZXcqIGJ1dHRvbiBvciBwcmVzcyAqQ3RybCtTaGlmdCtLKiB0byBwcmV2aWV3IHRoZSBIVE1MIGZpbGUpLg0KDQpUaGUgcHJldmlldyBzaG93cyB5b3UgYSByZW5kZXJlZCBIVE1MIGNvcHkgb2YgdGhlIGNvbnRlbnRzIG9mIHRoZSBlZGl0b3IuIENvbnNlcXVlbnRseSwgdW5saWtlICpLbml0KiwgKlByZXZpZXcqIGRvZXMgbm90IHJ1biBhbnkgUiBjb2RlIGNodW5rcy4gSW5zdGVhZCwgdGhlIG91dHB1dCBvZiB0aGUgY2h1bmsgd2hlbiBpdCB3YXMgbGFzdCBydW4gaW4gdGhlIGVkaXRvciBpcyBkaXNwbGF5ZWQuDQo=</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIkZpbmFsIFByb2plY3QiDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCmF1dGhvcnM6IEpvc2h1YSBBbGxlc3NpbywgS2FzaHlhcCBWYWxsdXIgYW5kIE1hcmNvIENhbWFsaWNoDQotLS0NCg0KYGBge3J9DQpyZXF1aXJlZF9wYWNrYWdlcyA8LSBjKCJ0aWR5dmVyc2UiLCAiamFuaXRvciIsICJoZXJlIiwgIm9wZW5tZXRlbyIsICJsdWJyaWRhdGUiLCAiZm9yY2F0cyIpDQoNCmZvciAocGtnIGluIHJlcXVpcmVkX3BhY2thZ2VzKSB7DQogIGlmICghcmVxdWlyZShwa2csIGNoYXJhY3Rlci5vbmx5ID0gVFJVRSkpIHsNCiAgICBpbnN0YWxsLnBhY2thZ2VzKHBrZywgZGVwZW5kZW5jaWVzID0gVFJVRSkNCiAgICBsaWJyYXJ5KHBrZywgY2hhcmFjdGVyLm9ubHkgPSBUUlVFKQ0KICB9DQp9DQoNCmlmIChhbGwoc2FwcGx5KHJlcXVpcmVkX3BhY2thZ2VzLCByZXF1aXJlTmFtZXNwYWNlLCBxdWlldGx5ID0gVFJVRSkpKSB7DQogIGNhdCgiQWxsIHJlcXVpcmVkIHBhY2thZ2VzIGFyZSBsb2FkZWQuXG4iKQ0KfSBlbHNlIHsNCiAgd2FybmluZygiU29tZSBwYWNrYWdlcyBmYWlsZWQgdG8gbG9hZC4iKQ0KfQ0KDQpgYGANCg0KYGBge3J9DQpkZl8wMT1yZWFkX2NzdihoZXJlKCJkYXRhX3JhdyIsICIyMDIzMDEtY2FwaXRhbGJpa2VzaGFyZS10cmlwZGF0YS5jc3YiKSkNCmRmXzAyPXJlYWRfY3N2KGhlcmUoImRhdGFfcmF3IiwgIjIwMjMwMi1jYXBpdGFsYmlrZXNoYXJlLXRyaXBkYXRhLmNzdiIpKQ0KZGZfMDM9cmVhZF9jc3YoaGVyZSgiZGF0YV9yYXciLCAiMjAyMzAzLWNhcGl0YWxiaWtlc2hhcmUtdHJpcGRhdGEuY3N2IikpDQpkZl8wND1yZWFkX2NzdihoZXJlKCJkYXRhX3JhdyIsICIyMDIzMDQtY2FwaXRhbGJpa2VzaGFyZS10cmlwZGF0YS5jc3YiKSkNCmRmXzA1PXJlYWRfY3N2KGhlcmUoImRhdGFfcmF3IiwgIjIwMjMwNS1jYXBpdGFsYmlrZXNoYXJlLXRyaXBkYXRhLmNzdiIpKQ0KZGZfMDY9cmVhZF9jc3YoaGVyZSgiZGF0YV9yYXciLCAiMjAyMzA2LWNhcGl0YWxiaWtlc2hhcmUtdHJpcGRhdGEuY3N2IikpDQpkZl8wNz1yZWFkX2NzdihoZXJlKCJkYXRhX3JhdyIsICIyMDIzMDctY2FwaXRhbGJpa2VzaGFyZS10cmlwZGF0YS5jc3YiKSkNCmRmXzA4PXJlYWRfY3N2KGhlcmUoImRhdGFfcmF3IiwgIjIwMjMwOC1jYXBpdGFsYmlrZXNoYXJlLXRyaXBkYXRhLmNzdiIpKQ0KZGZfMDk9cmVhZF9jc3YoaGVyZSgiZGF0YV9yYXciLCAiMjAyMzA5LWNhcGl0YWxiaWtlc2hhcmUtdHJpcGRhdGEuY3N2IikpDQpkZl8xMD1yZWFkX2NzdihoZXJlKCJkYXRhX3JhdyIsICIyMDIzMTAtY2FwaXRhbGJpa2VzaGFyZS10cmlwZGF0YS5jc3YiKSkNCmBgYA0KDQo=</div>
 
 
 
