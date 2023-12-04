@@ -23,19 +23,69 @@ if (all(sapply(required_packages, requireNamespace, quietly = TRUE))) {
 ```
 
 ```{r}
-df_01=read_csv(here("data_raw", "202301-capitalbikeshare-tripdata.csv"))
-df_02=read_csv(here("data_raw", "202302-capitalbikeshare-tripdata.csv"))
-df_03=read_csv(here("data_raw", "202303-capitalbikeshare-tripdata.csv"))
-df_04=read_csv(here("data_raw", "202304-capitalbikeshare-tripdata.csv"))
-df_05=read_csv(here("data_raw", "202305-capitalbikeshare-tripdata.csv"))
-df_06=read_csv(here("data_raw", "202306-capitalbikeshare-tripdata.csv"))
-df_07=read_csv(here("data_raw", "202307-capitalbikeshare-tripdata.csv"))
-df_08=read_csv(here("data_raw", "202308-capitalbikeshare-tripdata.csv"))
-df_09=read_csv(here("data_raw", "202309-capitalbikeshare-tripdata.csv"))
-df_10=read_csv(here("data_raw", "202310-capitalbikeshare-tripdata.csv"))
+df_01=read_csv(here("data_raw", "202301-capitalbikeshare-tripdata.csv"))%>%
+ filter(
+    !is.na(start_station_name) & !is.na(start_station_id) & start_station_name != "" & start_station_id != "" &
+    !is.na(end_station_name) & !is.na(end_station_id) & end_station_name != "" & end_station_id != "" &
+    !is.na(start_lat) & !is.na(start_lng) & !is.na(end_lng)
+  )
+df_02=read_csv(here("data_raw", "202302-capitalbikeshare-tripdata.csv"))%>%
+  filter(
+    !is.na(start_station_name) & !is.na(start_station_id) & start_station_name != "" & start_station_id != "" &
+    !is.na(end_station_name) & !is.na(end_station_id) & end_station_name != "" & end_station_id != "" &
+    !is.na(start_lat) & !is.na(start_lng) & !is.na(end_lng)
+  )
+df_03=read_csv(here("data_raw", "202303-capitalbikeshare-tripdata.csv"))%>%
+  filter(
+    !is.na(start_station_name) & !is.na(start_station_id) & start_station_name != "" & start_station_id != "" &
+    !is.na(end_station_name) & !is.na(end_station_id) & end_station_name != "" & end_station_id != "" &
+    !is.na(start_lat) & !is.na(start_lng) & !is.na(end_lng)
+  )
+df_04=read_csv(here("data_raw", "202304-capitalbikeshare-tripdata.csv"))%>%
+  filter(
+    !is.na(start_station_name) & !is.na(start_station_id) & start_station_name != "" & start_station_id != "" &
+    !is.na(end_station_name) & !is.na(end_station_id) & end_station_name != "" & end_station_id != "" &
+    !is.na(start_lat) & !is.na(start_lng) & !is.na(end_lng)
+  )
+df_05=read_csv(here("data_raw", "202305-capitalbikeshare-tripdata.csv"))%>%
+  filter(
+    !is.na(start_station_name) & !is.na(start_station_id) & start_station_name != "" & start_station_id != "" &
+    !is.na(end_station_name) & !is.na(end_station_id) & end_station_name != "" & end_station_id != "" &
+    !is.na(start_lat) & !is.na(start_lng) & !is.na(end_lng)
+  )
+df_06=read_csv(here("data_raw", "202306-capitalbikeshare-tripdata.csv"))%>%
+  filter(
+    !is.na(start_station_name) & !is.na(start_station_id) & start_station_name != "" & start_station_id != "" &
+    !is.na(end_station_name) & !is.na(end_station_id) & end_station_name != "" & end_station_id != "" &
+    !is.na(start_lat) & !is.na(start_lng) & !is.na(end_lng)
+  )
+df_07=read_csv(here("data_raw", "202307-capitalbikeshare-tripdata.csv"))%>%
+  filter(
+    !is.na(start_station_name) & !is.na(start_station_id) & start_station_name != "" & start_station_id != "" &
+    !is.na(end_station_name) & !is.na(end_station_id) & end_station_name != "" & end_station_id != "" &
+    !is.na(start_lat) & !is.na(start_lng) & !is.na(end_lng)
+  )
+df_08=read_csv(here("data_raw", "202308-capitalbikeshare-tripdata.csv"))%>%
+  filter(
+    !is.na(start_station_name) & !is.na(start_station_id) & start_station_name != "" & start_station_id != "" &
+    !is.na(end_station_name) & !is.na(end_station_id) & end_station_name != "" & end_station_id != "" &
+    !is.na(start_lat) & !is.na(start_lng) & !is.na(end_lng)
+  )
+df_09=read_csv(here("data_raw", "202309-capitalbikeshare-tripdata.csv"))%>%
+  filter(
+    !is.na(start_station_name) & !is.na(start_station_id) & start_station_name != "" & start_station_id != "" &
+    !is.na(end_station_name) & !is.na(end_station_id) & end_station_name != "" & end_station_id != "" &
+    !is.na(start_lat) & !is.na(start_lng) & !is.na(end_lng)
+  )
+df_10=read_csv(here("data_raw", "202310-capitalbikeshare-tripdata.csv"))%>%
+filter(
+    !is.na(start_station_name) & !is.na(start_station_id) & start_station_name != "" & start_station_id != "" &
+    !is.na(end_station_name) & !is.na(end_station_id) & end_station_name != "" & end_station_id != "" &
+    !is.na(start_lat) & !is.na(start_lng) & !is.na(end_lng)
+  )
 ```
 ```{r}
-df <- bind_rows(
+all_data <- bind_rows(
   df_01, df_02, df_03, df_04, df_05, df_06, df_07, df_08, df_09, df_10,
   .id = "month"
 )
