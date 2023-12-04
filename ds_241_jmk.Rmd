@@ -34,4 +34,39 @@ df_08=read_csv(here("data_raw", "202308-capitalbikeshare-tripdata.csv"))
 df_09=read_csv(here("data_raw", "202309-capitalbikeshare-tripdata.csv"))
 df_10=read_csv(here("data_raw", "202310-capitalbikeshare-tripdata.csv"))
 ```
+```{r}
+df <- bind_rows(
+  df_01, df_02, df_03, df_04, df_05, df_06, df_07, df_08, df_09, df_10,
+  .id = "month"
+)
+
+df$started_at <- as.POSIXct(df$started_at, format = "%Y-%m-%d %H:%M:%S")
+
+df$month <- format(df$started_at, "%Y-%m")
+
+ggplot(df, aes(x = month)) +
+  geom_bar() +
+  labs(title = "Monthly Ride Counts",
+       x = "Month",
+       y = "Ride Counts") +
+  theme_minimal()
+
+```
+```{r}
+ggplot(all_data, aes(x = month, y = as.numeric(ended_at - started_at))) +
+  geom_boxplot() +
+  labs(title = "Average Ride Duration by Month",
+       x = "Month",
+       y = "Duration (minutes)") +
+  theme_minimal()
+```
+```{r}
+ggplot(all_data, aes(x = month, fill = rideable_type)) +
+  geom_bar(position = "fill") +
+  labs(title = "Popular Rideable Types by Month",
+       x = "Month",
+       y = "Proportion") +
+  theme_minimal() +
+  scale_y_continuous(labels = scales::percent_format(scale = 1))
+```
 
