@@ -3,7 +3,7 @@ title: "Final Project"
 output: html_notebook
 authors: Joshua Allessio, Kashyap Vallur and Marco Camalich
 ---
-
+ 
 ```{r}
 required_packages <- c("tidyverse", "janitor", "here", "openmeteo", "lubridate", "forcats")
 
