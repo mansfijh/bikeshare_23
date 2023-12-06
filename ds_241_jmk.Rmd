@@ -5,7 +5,7 @@ authors: Joshua Allessio, Kashyap Vallur and Marco Camalich
 ---
  
 ```{r}
-required_packages <- c("tidyverse", "janitor", "here", "openmeteo", "lubridate", "forcats")
+required_packages <- c("tidyverse", "janitor", "here", "openmeteo", "lubridate", "forcats", "dplyr")
 
 for (packages in required_packages) {
   if (!require(packages, character.only = TRUE)) {
@@ -21,6 +21,41 @@ if (all(sapply(required_packages, requireNamespace, quietly = TRUE))) {
 }
 
 ```
+
+## Create a function to filter useless data from the data set
+This function takes the DC bikeshare data sets and removes columns with NA values, as well as rides which lasted
+less than 30 seconds or more than 13 hours. 
+```{r}
+filter_bikeshare <- function(df) {
+  df |> filter(
+    !is.na(start_station_name) & !is.na(start_station_id) & start_station_name != "" & start_station_id != "" &
+    !is.na(end_station_name) & !is.na(end_station_id) & end_station_name != "" & end_station_id != "" &
+    !is.na(start_lat) & !is.na(start_lng) & !is.na(end_lng)    
+  )
+  df <- df |> 
+    mutate(duration = as.numeric(difftime(ended_at, started_at))) |>  
+    filter(duration > 30) |>  # Longer than 30 seconds
+    filter (duration < 46800) # Less than 13 hours
+return(df)
+}
+
+df_03 <- filter_bikeshare(df_03)
+```
+
+
+## Next Steps
+Tried a few things for my idea, couldn't get it to work yet. But here's my idea in non-code form. 
+1. Make a new df with columns 'time', start_station, end_station, latitude, and longitude. 
+2. There is a row for every unique time value in both started_at and ended_at. 
+3. If that time value is when a ride started, start_station contains the station, while end_station contains nothing.          Latitude and longitude contaon the start stations coordinates. 
+3b. If that time value is when a ride ended, end_station contains that station, while start_station contains nothing.          Latitude and longitude contain the end stations coordinates. 
+4. Make sure this df is in chronological order. 
+5. Set up a categorical variable for the different stations. 
+6. Make a new column or new dataframe to hold the cumulative sum of bikes at each station. 
+   If started_station is populated, the categorical value it is populated with (the bike stations) gets -1
+   If end_station is populated, the categorical value it is populated with (the bike stations) gets +1
+7. Group these by hour or day
+8. Map
 
 ```{r}
 df_01=read_csv(here("data_raw", "202301-capitalbikeshare-tripdata.csv"))%>%
