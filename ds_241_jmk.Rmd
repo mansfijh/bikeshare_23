@@ -5,6 +5,11 @@ authors: Joshua Allessio, Kashyap Vallur and Marco Camalich
 ---
  
 ```{r}
+library(lubridate)
+if (!require(ggplot2)) {
+  install.packages("ggplot2")
+  library(ggplot2)
+}
 required_packages <- c("tidyverse", "janitor", "here", "openmeteo", "lubridate", "forcats", "dplyr")
 
 for (packages in required_packages) {
@@ -39,7 +44,8 @@ filter_bikeshare <- function(df) {
 return(df)
 }
 
-df_03 <- filter_bikeshare(df_03)
+
+
 ```
 
 
@@ -118,6 +124,8 @@ filter(
     !is.na(end_station_name) & !is.na(end_station_id) & end_station_name != "" & end_station_id != "" &
     !is.na(start_lat) & !is.na(start_lng) & !is.na(end_lng)
   )
+
+
 ```
 ```{r}
 all_data <- bind_rows(
@@ -125,11 +133,11 @@ all_data <- bind_rows(
   .id = "month"
 )
 
-df$started_at <- as.POSIXct(df$started_at, format = "%Y-%m-%d %H:%M:%S")
+all_data$started_at <- as.POSIXct(all_data$started_at, format = "%Y-%m-%d %H:%M:%S")
 
-df$month <- format(df$started_at, "%Y-%m")
+all_data$month <- format(all_data$started_at, "%Y-%m")
 
-ggplot(df, aes(x = month)) +
+ggplot(all_data, aes(x = month)) +
   geom_bar() +
   labs(title = "Monthly Ride Counts",
        x = "Month",
@@ -154,4 +162,77 @@ ggplot(all_data, aes(x = month, fill = rideable_type)) +
   theme_minimal() +
   scale_y_continuous(labels = scales::percent_format(scale = 1))
 ```
+
+
+
+```{r}
+
+# Step 1: Create a new dataframe with the desired columns
+time_data <- data.frame(time = character(),
+                        start_station = character(),
+                        end_station = character(),
+                        latitude = numeric(),
+                        longitude = numeric(),
+                        stringsAsFactors = FALSE)
+
+# Step 2: Extract unique time values from started_at and ended_at in all_data
+unique_times <- unique(c(all_data$started_at, all_data$ended_at))
+
+# Step 3: Populate the new data frames based on ride start and end times
+start_data <- all_data %>%
+  filter(!is.na(start_station_name)) %>%
+  select(started_at, start_station_name, start_lat, start_lng) %>%
+  rename(time = started_at,
+         station = start_station_name,
+         latitude = start_lat,
+         longitude = start_lng) %>%
+  mutate(end_station = "")
+
+end_data <- all_data %>%
+  filter(!is.na(end_station_name)) %>%
+  select(ended_at, end_station_name, end_lat, end_lng) %>%
+  rename(time = ended_at,
+         station = end_station_name,
+         latitude = end_lat,
+         longitude = end_lng) %>%
+  mutate(start_station = "")
+
+# Combine start and end data frames
+time_data <- bind_rows(start_data, end_data)
+
+# Step 4: Ensure chronological order
+time_data <- time_data %>%
+  arrange(as.POSIXct(time))
+# Print the first few rows of the time_data dataframe for inspection
+print(head(time_data))
+
+
+
+# Step 5: Set up a categorical variable for stations
+time_data <- time_data %>%
+  mutate(station = as.factor(station))  # Assuming station is a suitable variable for categorization
+
+# Step 6: Create a new column for cumulative sum of bikes at each station
+time_data <- time_data %>%
+  group_by(station) %>%
+  mutate(cumulative_bikes = cumsum(ifelse(start_station != "", -1, 1)))
+
+# Step 7: Group by hour or day
+# For example, grouping by hour
+time_data <- time_data %>%
+  group_by(station, hour = lubridate::hour(as.POSIXct(time))) %>%
+  summarise(cumulative_bikes = sum(cumulative_bikes))
+
+# Step 8: Create a line plot of cumulative bike count over time
+ggplot(time_data, aes(x = hour, y = cumulative_bikes, color = station)) +
+  geom_line() +
+  labs(title = "Cumulative Bike Count Over Time",
+       x = "Hour",
+       y = "Cumulative Bikes") +
+  theme_minimal()
+```
+```{r}
+
+```
+
 
