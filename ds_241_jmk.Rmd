@@ -181,7 +181,17 @@ print(head(time_data))
 ## Fun With Categorical Variables (Josh attempt)
 I'm sure there may be a very efficient way to do this by making use of categorical variables, but I don't have enough experience for that. Anyways...
 ```{r}
-
+# Arrange the data by bike station and then by time
+data2 <- time_data |>
+  arrange(station, time) |>
+  group_by(station) |>
+  mutate(delta = 
+           
+           
+# Simply need to element-wise sum bikes_in and bikes_out, 
+# Then calculate the cumulative sum
+# Then group by hour
+# Then plot
 ```
 
 
