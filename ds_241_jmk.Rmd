@@ -38,8 +38,6 @@ filter_bikeshare <- function(df) {
     filter (duration < 46800) # Less than 13 hours
 return(df)
 }
-
-df_03 <- filter_bikeshare(df_03)
 ```
 
 
@@ -58,84 +56,46 @@ Tried a few things for my idea, couldn't get it to work yet. But here's my idea 
 8. Map
 
 ```{r}
-df_01=read_csv(here("data_raw", "202301-capitalbikeshare-tripdata.csv"))%>%
- filter(
-    !is.na(start_station_name) & !is.na(start_station_id) & start_station_name != "" & start_station_id != "" &
-    !is.na(end_station_name) & !is.na(end_station_id) & end_station_name != "" & end_station_id != "" &
-    !is.na(start_lat) & !is.na(start_lng) & !is.na(end_lng)
-  )
-df_02=read_csv(here("data_raw", "202302-capitalbikeshare-tripdata.csv"))%>%
-  filter(
-    !is.na(start_station_name) & !is.na(start_station_id) & start_station_name != "" & start_station_id != "" &
-    !is.na(end_station_name) & !is.na(end_station_id) & end_station_name != "" & end_station_id != "" &
-    !is.na(start_lat) & !is.na(start_lng) & !is.na(end_lng)
-  )
-df_03=read_csv(here("data_raw", "202303-capitalbikeshare-tripdata.csv"))%>%
-  filter(
-    !is.na(start_station_name) & !is.na(start_station_id) & start_station_name != "" & start_station_id != "" &
-    !is.na(end_station_name) & !is.na(end_station_id) & end_station_name != "" & end_station_id != "" &
-    !is.na(start_lat) & !is.na(start_lng) & !is.na(end_lng)
-  )
-df_04=read_csv(here("data_raw", "202304-capitalbikeshare-tripdata.csv"))%>%
-  filter(
-    !is.na(start_station_name) & !is.na(start_station_id) & start_station_name != "" & start_station_id != "" &
-    !is.na(end_station_name) & !is.na(end_station_id) & end_station_name != "" & end_station_id != "" &
-    !is.na(start_lat) & !is.na(start_lng) & !is.na(end_lng)
-  )
-df_05=read_csv(here("data_raw", "202305-capitalbikeshare-tripdata.csv"))%>%
-  filter(
-    !is.na(start_station_name) & !is.na(start_station_id) & start_station_name != "" & start_station_id != "" &
-    !is.na(end_station_name) & !is.na(end_station_id) & end_station_name != "" & end_station_id != "" &
-    !is.na(start_lat) & !is.na(start_lng) & !is.na(end_lng)
-  )
-df_06=read_csv(here("data_raw", "202306-capitalbikeshare-tripdata.csv"))%>%
-  filter(
-    !is.na(start_station_name) & !is.na(start_station_id) & start_station_name != "" & start_station_id != "" &
-    !is.na(end_station_name) & !is.na(end_station_id) & end_station_name != "" & end_station_id != "" &
-    !is.na(start_lat) & !is.na(start_lng) & !is.na(end_lng)
-  )
-df_07=read_csv(here("data_raw", "202307-capitalbikeshare-tripdata.csv"))%>%
-  filter(
-    !is.na(start_station_name) & !is.na(start_station_id) & start_station_name != "" & start_station_id != "" &
-    !is.na(end_station_name) & !is.na(end_station_id) & end_station_name != "" & end_station_id != "" &
-    !is.na(start_lat) & !is.na(start_lng) & !is.na(end_lng)
-  )
-df_08=read_csv(here("data_raw", "202308-capitalbikeshare-tripdata.csv"))%>%
-  filter(
-    !is.na(start_station_name) & !is.na(start_station_id) & start_station_name != "" & start_station_id != "" &
-    !is.na(end_station_name) & !is.na(end_station_id) & end_station_name != "" & end_station_id != "" &
-    !is.na(start_lat) & !is.na(start_lng) & !is.na(end_lng)
-  )
-df_09=read_csv(here("data_raw", "202309-capitalbikeshare-tripdata.csv"))%>%
-  filter(
-    !is.na(start_station_name) & !is.na(start_station_id) & start_station_name != "" & start_station_id != "" &
-    !is.na(end_station_name) & !is.na(end_station_id) & end_station_name != "" & end_station_id != "" &
-    !is.na(start_lat) & !is.na(start_lng) & !is.na(end_lng)
-  )
-df_10=read_csv(here("data_raw", "202310-capitalbikeshare-tripdata.csv"))%>%
-filter(
-    !is.na(start_station_name) & !is.na(start_station_id) & start_station_name != "" & start_station_id != "" &
-    !is.na(end_station_name) & !is.na(end_station_id) & end_station_name != "" & end_station_id != "" &
-    !is.na(start_lat) & !is.na(start_lng) & !is.na(end_lng)
-  )
+df_01=read_csv(here("data_raw", "202301-capitalbikeshare-tripdata.csv"))
+df_02=read_csv(here("data_raw", "202302-capitalbikeshare-tripdata.csv"))
+df_03=read_csv(here("data_raw", "202303-capitalbikeshare-tripdata.csv"))
+df_04=read_csv(here("data_raw", "202304-capitalbikeshare-tripdata.csv"))
+df_05=read_csv(here("data_raw", "202305-capitalbikeshare-tripdata.csv"))
+df_06=read_csv(here("data_raw", "202306-capitalbikeshare-tripdata.csv"))
+df_07=read_csv(here("data_raw", "202307-capitalbikeshare-tripdata.csv"))
+df_08=read_csv(here("data_raw", "202308-capitalbikeshare-tripdata.csv"))
+df_09=read_csv(here("data_raw", "202309-capitalbikeshare-tripdata.csv"))
+df_10=read_csv(here("data_raw", "202310-capitalbikeshare-tripdata.csv"))
 ```
+
+```{r}
+df_01 <- filter_bikeshare(df_01)
+df_02 <- filter_bikeshare(df_02)
+df_03 <- filter_bikeshare(df_03)
+df_04 <- filter_bikeshare(df_04)
+df_05 <- filter_bikeshare(df_05)
+df_06 <- filter_bikeshare(df_06)
+df_07 <- filter_bikeshare(df_07)
+df_08 <- filter_bikeshare(df_08)
+df_09 <- filter_bikeshare(df_09)
+df_10 <- filter_bikeshare(df_10)
+```
+
 ```{r}
 all_data <- bind_rows(
   df_01, df_02, df_03, df_04, df_05, df_06, df_07, df_08, df_09, df_10,
   .id = "month"
 )
 
-df$started_at <- as.POSIXct(df$started_at, format = "%Y-%m-%d %H:%M:%S")
+all_data$started_at <- as.POSIXct(all_data$started_at, format = "%Y-%m-%d %H:%M:%S")
+all_data$month <- format(all_data$started_at, "%Y-%m")
 
-df$month <- format(df$started_at, "%Y-%m")
-
-ggplot(df, aes(x = month)) +
+ggplot(all_data, aes(x = month)) +
   geom_bar() +
   labs(title = "Monthly Ride Counts",
        x = "Month",
        y = "Ride Counts") +
   theme_minimal()
-
 ```
 ```{r}
 ggplot(all_data, aes(x = month, y = as.numeric(ended_at - started_at))) +
@@ -145,6 +105,7 @@ ggplot(all_data, aes(x = month, y = as.numeric(ended_at - started_at))) +
        y = "Duration (minutes)") +
   theme_minimal()
 ```
+
 ```{r}
 ggplot(all_data, aes(x = month, fill = rideable_type)) +
   geom_bar(position = "fill") +
@@ -152,6 +113,6 @@ ggplot(all_data, aes(x = month, fill = rideable_type)) +
        x = "Month",
        y = "Proportion") +
   theme_minimal() +
-  scale_y_continuous(labels = scales::percent_format(scale = 1))
+  scale_y_continuous(labels = scales::percent_format(scale = 100))
 ```
 
