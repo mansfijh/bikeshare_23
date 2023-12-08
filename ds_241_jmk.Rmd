@@ -153,7 +153,7 @@ start_data <- all_data %>%
          station = start_station_name,
          latitude = start_lat,
          longitude = start_lng) %>%
-  mutate(end_station = "")
+  mutate(bikes_out = "-1")
 
 end_data <- all_data %>%
   filter(!is.na(end_station_name)) %>%
@@ -162,10 +162,12 @@ end_data <- all_data %>%
          station = end_station_name,
          latitude = end_lat,
          longitude = end_lng) %>%
-  mutate(start_station = "")
+  mutate(bikes_in = "1")
 
 # Combine start and end data frames
 time_data <- bind_rows(start_data, end_data)
+
+
 
 # Step 4: Ensure chronological order
 time_data <- time_data %>%
