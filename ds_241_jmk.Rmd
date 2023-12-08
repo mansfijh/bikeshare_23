@@ -3,7 +3,15 @@ title: "Final Project"
 output: html_notebook
 authors: "Joshua Allessio, Kashyap Vallur and Marco Camalich"
 ---
- 
+
+## Problem Statement
+Washington DC's public bikeshare dataset is a classic data science project. Much can be gleaned from this data. In this report, we set out to discover which of the bike stations are particularly efficient or inefficient. The goal is to create a visualization of the net flow of bikes for each station over time. 
+
+If the net flow for a bike station often stays close to 0, we may assume that that station is in an optimal position and hosts enough bicycles. Furthermore, high turnover of bikes can imply that a bike station is in an optimal position, while low turnover of bikes may imply that that bike station is not placed in an optimal location. 
+
+Another pattern that may arise could be a bike station that has a strong negative netflow early in the day, followed by a stagnant period of netflow later in the day. This would imply that the bike station has quickly become vacant - now offering no bicycles for potential riders. Potential solution for this particular problem might be increasing the size of that station, creating a new one nearby, or making a larger change to the infrastructure of the bikeshare. 
+
+
 ```{r}
 required_packages <- c("tidyverse", "janitor", "here", "openmeteo", "lubridate", "forcats", "dplyr")
 
@@ -41,20 +49,7 @@ return(df)
 ```
 
 
-## Next Steps
-Tried a few things for my idea, couldn't get it to work yet. But here's my idea in non-code form. 
-1. Make a new df with columns 'time', start_station, end_station, latitude, and longitude. 
-2. There is a row for every unique time value in both started_at and ended_at. 
-3. If that time value is when a ride started, start_station contains the station, while end_station contains nothing.          Latitude and longitude contaon the start stations coordinates. 
-3b. If that time value is when a ride ended, end_station contains that station, while start_station contains nothing.          Latitude and longitude contain the end stations coordinates. 
-4. Make sure this df is in chronological order. 
-5. Set up a categorical variable for the different stations. 
-6. Make a new column or new dataframe to hold the cumulative sum of bikes at each station. 
-   If started_station is populated, the categorical value it is populated with (the bike stations) gets -1
-   If end_station is populated, the categorical value it is populated with (the bike stations) gets +1
-7. Group these by hour or day
-8. Map
-
+## Import the data
 ```{r}
 df_01=read_csv(here("data_raw", "202301-capitalbikeshare-tripdata.csv"))
 df_02=read_csv(here("data_raw", "202302-capitalbikeshare-tripdata.csv"))
@@ -68,6 +63,7 @@ df_09=read_csv(here("data_raw", "202309-capitalbikeshare-tripdata.csv"))
 df_10=read_csv(here("data_raw", "202310-capitalbikeshare-tripdata.csv"))
 ```
 
+## Tidy the Data
 ```{r}
 df_01 <- filter_bikeshare(df_01)
 df_02 <- filter_bikeshare(df_02)
@@ -81,6 +77,9 @@ df_09 <- filter_bikeshare(df_09)
 df_10 <- filter_bikeshare(df_10)
 ```
 
+
+## Aggregate the Data
+Aggregate the data into one data frame and begin with a simple visualization
 ```{r}
 all_data <- bind_rows(
   df_01, df_02, df_03, df_04, df_05, df_06, df_07, df_08, df_09, df_10,
@@ -119,6 +118,21 @@ ggplot(all_data, aes(x = month, fill = rideable_type)) +
 
 
 
+## Next Steps
+Tried a few things for my idea, couldn't get it to work yet. But here's my idea in non-code form. 
+1. Make a new df with columns 'time', start_station, end_station, latitude, and longitude. 
+2. There is a row for every unique time value in both started_at and ended_at. 
+3. If that time value is when a ride started, start_station contains the station, while end_station contains nothing.          Latitude and longitude contain the start stations coordinates. 
+3b. If that time value is when a ride ended, end_station contains that station, while start_station contains nothing.          Latitude and longitude contain the end stations coordinates. 
+4. Make sure this df is in chronological order. 
+5. Set up a categorical variable for the different stations. 
+6. Make a new column or new dataframe to hold the cumulative sum of bikes at each station. 
+   If started_station is populated, the categorical value it is populated with (the bike stations) gets -1
+   If end_station is populated, the categorical value it is populated with (the bike stations) gets +1
+7. Group these by hour or day
+8. Map
+
+## 
 ```{r}
 # Step 1: Create a new dataframe with the desired columns
 time_data <- data.frame(time = character(),
@@ -159,8 +173,18 @@ time_data <- time_data %>%
 # Print the first few rows of the time_data dataframe for inspection
 print(head(time_data))
 
+```
 
 
+## Fun With Categorical Variables (Josh attempt)
+I'm sure there may be a very efficient way to do this by making use of categorical variables, but I don't have enough experience for that. Anyways...
+```{r}
+
+```
+
+
+## Fun with Categorical Variables (Kashyap / Marco work)
+```{r}
 # Step 5: Set up a categorical variable for stations
 time_data <- time_data %>%
   mutate(station = as.factor(station))  # Assuming station is a suitable variable for categorization
@@ -184,5 +208,4 @@ ggplot(time_data, aes(x = hour, y = cumulative_bikes, color = station)) +
        y = "Cumulative Bikes") +
   theme_minimal()
 ```
-
 
