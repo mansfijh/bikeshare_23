@@ -11,7 +11,8 @@ If the net flow for a bike station often stays close to 0, we may assume that th
 
 Another pattern that may arise could be a bike station that has a strong negative netflow early in the day, followed by a stagnant period of netflow later in the day. This would imply that the bike station has quickly become vacant - now offering no bicycles for potential riders. Potential solution for this particular problem might be increasing the size of that station, creating a new one nearby, or making a larger change to the infrastructure of the bikeshare. 
 
-
+## Document Setup
+Install packages required for analysis.
 ```{r}
 required_packages <- c("tidyverse", "janitor", "here", "openmeteo", "lubridate", "forcats", "dplyr")
 
@@ -94,7 +95,11 @@ ggplot(all_data, aes(x = month)) +
        x = "Month",
        y = "Ride Counts") +
   theme_minimal()
+
+
 ```
+
+## Find out how many bike stations there are
 ```{r}
 unique_station_count <- all_data %>%
   filter(!is.na(start_station_name) & !is.na(start_station_id) & start_station_name != "" & start_station_id != "") %>%
@@ -103,6 +108,8 @@ unique_station_count <- all_data %>%
 cat("The total amount of unique stations is:", unique_station_count$unique_stations, "\n")
 ```
 
+## Measure Activity At Each Station
+In this code chunk, we count how many times each station name appears in the data set. The more a station's name appears, the more it is used. We will be able to see which stations are the most useful, and which stations not being used in any significant capacity. 
 ```{r}
 # Combine start and end stations into one column
 all_stations <- bind_rows(
@@ -116,18 +123,16 @@ top_stations <- all_stations %>%
   count(station, sort = TRUE) %>%
   head(5)
 
-# Print the top 5 stations
 print(top_stations)
 ```
-```{r}
-# Graph the top 5 stations
-```
+Above, we can see the stations that were used the most during the period of observation. Columbus Circle bike station was used 78000 times from January to November 2023. 
 
+## Create a visualization
 ```{r}
 # Convert month to a factor with the correct order
 all_data$month <- factor(all_data$month, levels = unique(all_data$month))
 
-# Filter data for the top 5 stations
+# Filter data for the top 5 stations by activity
 top_stations_data <- all_data %>%
   filter(start_station_name %in% top_stations$station)
 
@@ -141,31 +146,30 @@ ggplot(top_stations_data, aes(x = month, color = start_station_name, group = sta
   theme_minimal() +
   theme(legend.position = "top")
 ```
+In the visualization above, we can see the monthly change in bike station activity for the 5 most used bike stations. We can see that the Lincoln Memorial station is used much more in November than it was in February. 
 
+## Continue Observing Bike Station Activity
+Now, we will see which stations were used the least. 
 ```{r}
-# Get the top 5 stations (excluding NA)
+# Get the least active stations
 worst_stations <- all_stations %>%
   filter(!is.na(station)) %>%
   count(station, sort = TRUE) %>%
   filter(n < 50) %>%
-
-# Print the top 5 stations
 print(worst_stations)
-```
-```{r}
-# Get the top 5 stations with n >= 100 (excluding NA)
-bad_stations <- all_stations %>%
-  filter(!is.na(station)) %>%
-  count(station, sort = TRUE) %>%
-  filter(n >= 50) %>%
-  tail(5)
 
-# Print the top 5 stations
+
+# Get 5 stations with little activity
+bad_stations <- all_stations %>%
+  filter(!is.na(station)) %>%       # exclude NA values
+  count(station, sort = TRUE) %>%   # count how many times each station was used
+  filter(n >= 50) %>%               # exclude 
+  tail(5)
 print(bad_stations)
 ```
-```{r}
-# Graph the worst 5 stations
-```
+As you can see, the least used station is located at Shady Grove Hospital, with only 2 uses this year. That's a big difference between the most used station, at 78,000 uses this year! Upon further research, we can discove that Shady Grove Hospital has been permanently closed. This news, in combination with the fact that the bike station was used only twice, makes a good case for the removal of this particular station. It should be removed, or relocated somewhere where it will be more useful. 
+
+
 
 ```{r}
 ggplot(all_data, aes(x = month, fill = rideable_type)) +
