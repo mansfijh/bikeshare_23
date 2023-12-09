@@ -77,7 +77,6 @@ df_09 <- filter_bikeshare(df_09)
 df_10 <- filter_bikeshare(df_10)
 ```
 
-
 ## Aggregate the Data
 Aggregate the data into one data frame and begin with a simple visualization
 ```{r}
@@ -96,14 +95,76 @@ ggplot(all_data, aes(x = month)) +
        y = "Ride Counts") +
   theme_minimal()
 ```
+```{r}
+unique_station_count <- all_data %>%
+  filter(!is.na(start_station_name) & !is.na(start_station_id) & start_station_name != "" & start_station_id != "") %>%
+  summarise(unique_stations = n_distinct(start_station_name))
+
+cat("The total amount of unique stations is:", unique_station_count$unique_stations, "\n")
+```
 
 ```{r}
-ggplot(all_data, aes(x = month, y = as.numeric(ended_at - started_at))) +
-  geom_boxplot() +
-  labs(title = "Average Ride Duration by Month",
-       x = "Month",
-       y = "Duration (minutes)") +
-  theme_minimal()
+# Combine start and end stations into one column
+all_stations <- bind_rows(
+  select(all_data, station = start_station_name),
+  select(all_data, station = end_station_name)
+)
+
+# Get the top 5 stations (excluding NA)
+top_stations <- all_stations %>%
+  filter(!is.na(station)) %>%
+  count(station, sort = TRUE) %>%
+  head(5)
+
+# Print the top 5 stations
+print(top_stations)
+```
+```{r}
+# Graph the top 5 stations
+```
+
+```{r}
+# Convert month to a factor with the correct order
+all_data$month <- factor(all_data$month, levels = unique(all_data$month))
+
+# Filter data for the top 5 stations
+top_stations_data <- all_data %>%
+  filter(start_station_name %in% top_stations$station)
+
+# Create the line plot with increased line width (e.g., size = 1.5)
+ggplot(top_stations_data, aes(x = month, color = start_station_name, group = start_station_name)) +
+  geom_line(stat = "count", size = 1) +  # Adjust the size value as needed
+  scale_x_discrete(name = "Month") +
+  scale_y_continuous(name = "Ride Counts") +
+  labs(title = "Monthly Ride Counts for Top 5 Stations",
+       color = "Station") +
+  theme_minimal() +
+  theme(legend.position = "top")
+```
+
+```{r}
+# Get the top 5 stations (excluding NA)
+worst_stations <- all_stations %>%
+  filter(!is.na(station)) %>%
+  count(station, sort = TRUE) %>%
+  filter(n < 50) %>%
+
+# Print the top 5 stations
+print(worst_stations)
+```
+```{r}
+# Get the top 5 stations with n >= 100 (excluding NA)
+bad_stations <- all_stations %>%
+  filter(!is.na(station)) %>%
+  count(station, sort = TRUE) %>%
+  filter(n >= 50) %>%
+  tail(5)
+
+# Print the top 5 stations
+print(bad_stations)
+```
+```{r}
+# Graph the worst 5 stations
 ```
 
 ```{r}
@@ -116,108 +177,4 @@ ggplot(all_data, aes(x = month, fill = rideable_type)) +
   scale_y_continuous(labels = scales::percent_format(scale = 100))
 ```
 
-
-
-## Next Steps
-Tried a few things for my idea, couldn't get it to work yet. But here's my idea in non-code form. 
-1. Make a new df with columns 'time', start_station, end_station, latitude, and longitude. 
-2. There is a row for every unique time value in both started_at and ended_at. 
-3. If that time value is when a ride started, start_station contains the station, while end_station contains nothing.          Latitude and longitude contain the start stations coordinates. 
-3b. If that time value is when a ride ended, end_station contains that station, while start_station contains nothing.          Latitude and longitude contain the end stations coordinates. 
-4. Make sure this df is in chronological order. 
-5. Set up a categorical variable for the different stations. 
-6. Make a new column or new dataframe to hold the cumulative sum of bikes at each station. 
-   If started_station is populated, the categorical value it is populated with (the bike stations) gets -1
-   If end_station is populated, the categorical value it is populated with (the bike stations) gets +1
-7. Group these by hour or day
-8. Map
-
-## 
-```{r}
-# Step 1: Create a new dataframe with the desired columns
-time_data <- data.frame(time = character(),
-                        start_station = character(),
-                        end_station = character(),
-                        latitude = numeric(),
-                        longitude = numeric(),
-                        stringsAsFactors = FALSE)
-
-# Step 2: Extract unique time values from started_at and ended_at in all_data
-unique_times <- unique(c(all_data$started_at, all_data$ended_at))
-
-# Step 3: Populate the new data frames based on ride start and end times
-start_data <- all_data %>%
-  filter(!is.na(start_station_name)) %>%
-  select(started_at, start_station_name, start_lat, start_lng) %>%
-  rename(time = started_at,
-         station = start_station_name,
-         latitude = start_lat,
-         longitude = start_lng) %>%
-  mutate(bikes_out = "-1")
-
-end_data <- all_data %>%
-  filter(!is.na(end_station_name)) %>%
-  select(ended_at, end_station_name, end_lat, end_lng) %>%
-  rename(time = ended_at,
-         station = end_station_name,
-         latitude = end_lat,
-         longitude = end_lng) %>%
-  mutate(bikes_in = "1")
-
-# Combine start and end data frames
-time_data <- bind_rows(start_data, end_data)
-
-
-
-# Step 4: Ensure chronological order
-time_data <- time_data %>%
-  arrange(as.POSIXct(time))
-# Print the first few rows of the time_data dataframe for inspection
-print(head(time_data))
-
-```
-
-
-## Fun With Categorical Variables (Josh attempt)
-I'm sure there may be a very efficient way to do this by making use of categorical variables, but I don't have enough experience for that. Anyways...
-```{r}
-# Arrange the data by bike station and then by time
-data2 <- time_data |>
-  arrange(station, time) |>
-  group_by(station) |>
-  mutate(delta = 
-           
-           
-# Simply need to element-wise sum bikes_in and bikes_out, 
-# Then calculate the cumulative sum
-# Then group by hour
-# Then plot
-```
-
-
-## Fun with Categorical Variables (Kashyap / Marco work)
-```{r}
-# Step 5: Set up a categorical variable for stations
-time_data <- time_data %>%
-  mutate(station = as.factor(station))  # Assuming station is a suitable variable for categorization
-
-# Step 6: Create a new column for cumulative sum of bikes at each station
-time_data <- time_data %>%
-  group_by(station) %>%
-  mutate(cumulative_bikes = cumsum(ifelse(start_station != "", -1, 1)))
-
-# Step 7: Group by hour or day
-# For example, grouping by hour
-time_data <- time_data %>%
-  group_by(station, hour = lubridate::hour(as.POSIXct(time))) %>%
-  summarise(cumulative_bikes = sum(cumulative_bikes))
-
-# Step 8: Create a line plot of cumulative bike count over time
-ggplot(time_data, aes(x = hour, y = cumulative_bikes, color = station)) +
-  geom_line() +
-  labs(title = "Cumulative Bike Count Over Time",
-       x = "Hour",
-       y = "Cumulative Bikes") +
-  theme_minimal()
-```
 
