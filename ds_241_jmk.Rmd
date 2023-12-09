@@ -1,9 +1,12 @@
 ---
-title: "Final Project"
-output: html_notebook
+title: "Capital Bikeshare - Improving Ridership With Data Science"
+subtitle: "DS241 final project Fall 2023"
 authors: "Joshua Allessio, Kashyap Vallur and Marco Camalich"
+output: html_notebook
 ---
- 
+Joshua Allessio, Kashyap Vallur and Marco Camalich
+
+
 ## Problem Statement
 Washington DC's public bikeshare dataset is a classic data science project. Much can be gleaned from this data. In this report, we set out to determine if any of the bike stations were particularly efficient or inefficient in 2023. We will analyze how much each station is used, and draw conclusions about how to optimally position the bicycle infrastructure in order to maximize ridership. 
 
@@ -45,8 +48,7 @@ return(df)
 }
 ```
 
-## Import the data
-```{r}
+```{r, results = 'hide'}
 df_01=read_csv(here("data_raw", "202301-capitalbikeshare-tripdata.csv"))
 df_02=read_csv(here("data_raw", "202302-capitalbikeshare-tripdata.csv"))
 df_03=read_csv(here("data_raw", "202303-capitalbikeshare-tripdata.csv"))
@@ -59,10 +61,8 @@ df_09=read_csv(here("data_raw", "202309-capitalbikeshare-tripdata.csv"))
 df_10=read_csv(here("data_raw", "202310-capitalbikeshare-tripdata.csv"))
 ```
 
-Here we load the data into the R project. 
-
 ## Tidy the Data
-```{r}
+```{r results='hide'}
 df_01 <- filter_bikeshare(df_01)
 df_02 <- filter_bikeshare(df_02)
 df_03 <- filter_bikeshare(df_03)
@@ -178,6 +178,7 @@ bad_stations <- all_stations %>%
   tail(5)
 print(bad_stations)
 ```
+## Conclusion
 As you can see, the least used station is located at Shady Grove Hospital, with only 2 uses this year. That's a big difference between the most used station, at 78,000 uses this year! Upon further research, we can discover that Shady Grove Hospital has been permanently closed. This news, in combination with the fact that the bike station was used only twice, makes a good case for the removal of this particular station. It should be removed, or relocated somewhere where it will be more useful. 
 
 There are several other bike stations which were used less than 15 times throughout the year. Again, upon further research we can find an explanation. The Layton Hall bike station was just added last month. There has not been a lot of time for riders to find and use the new station. The Reston Regional Library bike station was relocated in January, which explains why it only has 2 rides - it did not exist for the majority of the data set.  
