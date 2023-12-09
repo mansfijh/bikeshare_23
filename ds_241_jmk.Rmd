@@ -122,13 +122,12 @@ cat("The total amount of unique stations is:", unique_station_count$unique_stati
 ## Measure Activity At Each Station
 In this code chunk, we count how many times each station name appears in the data set. The more a station's name appears, the more it is used. We will be able to see which stations are the most useful, and which stations not being used in any significant capacity. 
 ```{r}
-# Combine start and end stations into one column
+# Combine start and end stations into one column and get the top 5 stations
 all_stations <- bind_rows(
   select(all_data, station = start_station_name),
   select(all_data, station = end_station_name)
 )
 
-# Get the top 5 stations (excluding NA)
 top_stations <- all_stations %>%
   filter(!is.na(station)) %>%
   count(station, sort = TRUE) %>%
@@ -140,9 +139,6 @@ Above, we can see the stations that were used the most from January to November 
 
 ## Visualization - Station Use Throughout The Year
 ```{r}
-<<<<<<< HEAD
-# Get the top 5 stations (excluding NA)
-=======
 # Convert month to a factor with the correct order
 all_data$month <- factor(all_data$month, levels = unique(all_data$month))
 
@@ -150,9 +146,8 @@ all_data$month <- factor(all_data$month, levels = unique(all_data$month))
 top_stations_data <- all_data %>%
   filter(start_station_name %in% top_stations$station)
 
-# Create the line plot with increased line width (e.g., size = 1.5)
 ggplot(top_stations_data, aes(x = month, color = start_station_name, group = start_station_name)) +
-  geom_line(stat = "count", size = 1) +  # Adjust the size value as needed
+  geom_line(stat = "count", size = 1) +
   scale_x_discrete(name = "Month") +
   scale_y_continuous(name = "Ride Counts") +
   labs(title = "Monthly Ride Counts for Top 5 Stations",
@@ -166,14 +161,14 @@ In the visualization above, we can see the monthly change in bike station activi
 Now, we will see which stations were used the least. 
 ```{r}
 # Get the least active stations
->>>>>>> c1663b6e56fd4b48de674c8a451b6c0806add5f6
 worst_stations <- all_stations %>%
   filter(!is.na(station)) %>%
   count(station, sort = TRUE) %>%
   filter(n < 50) %>%
 print(worst_stations)
+```
 
-
+```{r}
 # Get 5 stations with little activity
 bad_stations <- all_stations %>%
   filter(!is.na(station)) %>%       # exclude NA values
