@@ -124,25 +124,6 @@ print(top_stations)
 ```
 
 ```{r}
-# Convert month to a factor with the correct order
-all_data$month <- factor(all_data$month, levels = unique(all_data$month))
-
-# Filter data for the top 5 stations
-top_stations_data <- all_data %>%
-  filter(start_station_name %in% top_stations$station)
-
-# Create the line plot with increased line width (e.g., size = 1.5)
-ggplot(top_stations_data, aes(x = month, color = start_station_name, group = start_station_name)) +
-  geom_line(stat = "count", size = 1) +  # Adjust the size value as needed
-  scale_x_discrete(name = "Month") +
-  scale_y_continuous(name = "Ride Counts") +
-  labs(title = "Monthly Ride Counts for Top 5 Stations",
-       color = "Station") +
-  theme_minimal() +
-  theme(legend.position = "top")
-```
-
-```{r}
 # Get the top 5 stations (excluding NA)
 worst_stations <- all_stations %>%
   filter(!is.na(station)) %>%
