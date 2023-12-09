@@ -5,14 +5,10 @@ authors: "Joshua Allessio, Kashyap Vallur and Marco Camalich"
 ---
 
 ## Problem Statement
-Washington DC's public bikeshare dataset is a classic data science project. Much can be gleaned from this data. In this report, we set out to discover which of the bike stations are particularly efficient or inefficient. The goal is to create a visualization of the net flow of bikes for each station over time. 
-
-If the net flow for a bike station often stays close to 0, we may assume that that station is in an optimal position and hosts enough bicycles. Furthermore, high turnover of bikes can imply that a bike station is in an optimal position, while low turnover of bikes may imply that that bike station is not placed in an optimal location. 
-
-Another pattern that may arise could be a bike station that has a strong negative netflow early in the day, followed by a stagnant period of netflow later in the day. This would imply that the bike station has quickly become vacant - now offering no bicycles for potential riders. Potential solution for this particular problem might be increasing the size of that station, creating a new one nearby, or making a larger change to the infrastructure of the bikeshare. 
+Washington DC's public bikeshare dataset is a classic data science project. Much can be gleaned from this data. In this report, we set out to determine if any of the bike stations were particularly efficient or inefficient in 2023. We will analyze how much each station is used, and draw conclusions about how to optimally position the bicycle infrastructure in order to maximize ridership. 
 
 ## Document Setup
-Install packages required for analysis.
+Below, we will install R packages required for analysis.
 ```{r}
 required_packages <- c("tidyverse", "janitor", "here", "openmeteo", "lubridate", "forcats", "dplyr")
 
@@ -49,7 +45,6 @@ return(df)
 }
 ```
 
-
 ## Import the data
 ```{r}
 df_01=read_csv(here("data_raw", "202301-capitalbikeshare-tripdata.csv"))
@@ -64,6 +59,8 @@ df_09=read_csv(here("data_raw", "202309-capitalbikeshare-tripdata.csv"))
 df_10=read_csv(here("data_raw", "202310-capitalbikeshare-tripdata.csv"))
 ```
 
+Here we load the data into the R project. 
+
 ## Tidy the Data
 ```{r}
 df_01 <- filter_bikeshare(df_01)
@@ -77,6 +74,7 @@ df_08 <- filter_bikeshare(df_08)
 df_09 <- filter_bikeshare(df_09)
 df_10 <- filter_bikeshare(df_10)
 ```
+Here, we use the custom function from earlier to tidy the 10 data sets. 
 
 ## Aggregate the Data
 Aggregate the data into one data frame and begin with a simple visualization
@@ -95,9 +93,22 @@ ggplot(all_data, aes(x = month)) +
        x = "Month",
        y = "Ride Counts") +
   theme_minimal()
-
-
 ```
+This simple graph shows the trend in bike ridership throughout the year, and it also verifies that we have not made a mistake in tidying and aggregating our data. 
+
+## Begin with a Visualization
+Right away, we can begin creating visualizations to get a better understanding of the users of the bikeshare program. 
+```{r}
+ggplot(all_data, aes(x = month, fill = rideable_type)) +
+  geom_bar(position = "fill") +
+  labs(title = "Popular Rideable Types by Month",
+       x = "Month",
+       y = "Proportion") +
+  theme_minimal() +
+  scale_y_continuous(labels = scales::percent_format(scale = 100))
+```
+The above graph shows us that in general, riders are using the classic bikes, with a slight trend towards favoring the electric bikes later in the year. 
+
 
 ## Find out how many bike stations there are
 ```{r}
@@ -125,9 +136,9 @@ top_stations <- all_stations %>%
 
 print(top_stations)
 ```
-Above, we can see the stations that were used the most during the period of observation. Columbus Circle bike station was used 78000 times from January to November 2023. 
+Above, we can see the stations that were used the most from January to November 2023. Columbus Circle bike station was used the most - 78000 times from January to November 2023. 
 
-## Create a visualization
+## Visualization - Station Use Throughout The Year
 ```{r}
 # Convert month to a factor with the correct order
 all_data$month <- factor(all_data$month, levels = unique(all_data$month))
@@ -146,7 +157,7 @@ ggplot(top_stations_data, aes(x = month, color = start_station_name, group = sta
   theme_minimal() +
   theme(legend.position = "top")
 ```
-In the visualization above, we can see the monthly change in bike station activity for the 5 most used bike stations. We can see that the Lincoln Memorial station is used much more in November than it was in February. 
+In the visualization above, we can see the monthly change in bike station activity for the 5 most used bike stations. We can see that the Columbus Circle / Union Station bike location has been the most useful this year. We can see that the Lincoln Memorial station is used much more in November than it was in February. 
 
 ## Continue Observing Bike Station Activity
 Now, we will see which stations were used the least. 
@@ -167,18 +178,13 @@ bad_stations <- all_stations %>%
   tail(5)
 print(bad_stations)
 ```
-As you can see, the least used station is located at Shady Grove Hospital, with only 2 uses this year. That's a big difference between the most used station, at 78,000 uses this year! Upon further research, we can discove that Shady Grove Hospital has been permanently closed. This news, in combination with the fact that the bike station was used only twice, makes a good case for the removal of this particular station. It should be removed, or relocated somewhere where it will be more useful. 
+As you can see, the least used station is located at Shady Grove Hospital, with only 2 uses this year. That's a big difference between the most used station, at 78,000 uses this year! Upon further research, we can discover that Shady Grove Hospital has been permanently closed. This news, in combination with the fact that the bike station was used only twice, makes a good case for the removal of this particular station. It should be removed, or relocated somewhere where it will be more useful. 
 
+There are several other bike stations which were used less than 15 times throughout the year. Again, upon further research we can find an explanation. The Layton Hall bike station was just added last month. There has not been a lot of time for riders to find and use the new station. The Reston Regional Library bike station was relocated in January, which explains why it only has 2 rides - it did not exist for the majority of the data set.  
 
+However, for the bike station located at Westbranch Dr & Jones Branch Dr, and several others, there is no additional information to be found. It may be a good idea for the Capital Bikeshare organizers to look further into these little-used stations and relocate them to somewhere where they will be used. 
 
-```{r}
-ggplot(all_data, aes(x = month, fill = rideable_type)) +
-  geom_bar(position = "fill") +
-  labs(title = "Popular Rideable Types by Month",
-       x = "Month",
-       y = "Proportion") +
-  theme_minimal() +
-  scale_y_continuous(labels = scales::percent_format(scale = 100))
-```
+By keeping track of bike station usage, we can be proactive in relocating bike stations to places where the resource will be more appropriate and potentially increase ridership by concentrating the bike stations to areas where they will be used. 
+
 
 
