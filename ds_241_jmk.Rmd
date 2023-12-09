@@ -141,16 +141,14 @@ Above, we can see the stations that were used the most from January to November 
 ```{r}
 # Convert month to a factor with the correct order
 all_data$month <- factor(all_data$month, levels = unique(all_data$month))
-
-# Filter data for the top 5 stations by activity
 top_stations_data <- all_data %>%
   filter(start_station_name %in% top_stations$station)
 
 ggplot(top_stations_data, aes(x = month, color = start_station_name, group = start_station_name)) +
-  geom_line(stat = "count", size = 1) +
+  geom_line(stat = "count", size = 1) +  # Adjust the size value as needed
   scale_x_discrete(name = "Month") +
   scale_y_continuous(name = "Ride Counts") +
-  labs(title = "Monthly Ride Counts for Top 5 Stations",
+  labs(title = "Monthly Ride Counts for Best Stations",
        color = "Station") +
   theme_minimal() +
   theme(legend.position = "top")
@@ -177,6 +175,23 @@ bad_stations <- all_stations %>%
   tail(5)
 print(bad_stations)
 ```
+```{r}
+# Convert month to a factor with the correct order
+all_data$month <- factor(all_data$month, levels = unique(all_data$month))
+bad_stations_data <- all_data %>%
+  filter(start_station_name %in% bad_stations$station)
+
+ggplot(bad_stations_data, aes(x = month, color = start_station_name, group = start_station_name)) +
+  geom_line(stat = "count", size = 1) +  # Adjust the size value as needed
+  scale_x_discrete(name = "Month") +
+  scale_y_continuous(name = "Ride Counts") +
+  labs(title = "Monthly Ride Counts for Bad Stations",
+       color = "Station") +
+  theme_minimal() +
+  theme(legend.position = "top")
+```
+In the visualization above, we can see that the participation of the stations is considerably lower in contrast to the top stations. This leads us to observe there is a need to analyze why certain zones are getting people away from bike riding, as well as detecting the principal causes of station closures throughout the year.
+
 ## Conclusion
 As you can see, the least used station is located at Shady Grove Hospital, with only 2 uses this year. That's a big difference between the most used station, at 78,000 uses this year! Upon further research, we can discover that Shady Grove Hospital has been permanently closed. This news, in combination with the fact that the bike station was used only twice, makes a good case for the removal of this particular station. It should be removed, or relocated somewhere where it will be more useful. 
 
